@@ -64,6 +64,8 @@ class SQLiteStatement {
 
   inline int64_t get_result_col_int(int iCol) { return sqlite3_column_int64(stmt_.get(), iCol); }
 
+  inline double get_result_col_double(int iCol) { return sqlite3_column_double(stmt_.get(), iCol); }
+
  private:
   void bindArgument(int v) {
     if (sqlite3_bind_int(stmt_.get(), bind_cnt_, v) != SQLITE_OK) {
