@@ -14,7 +14,7 @@ std::string descr(const std::string& conv_name) {
 double apply(const std::string& conv_name, const std::string& date, double val) {
     (void)conv_name;
 
-    SQLite3Guard db("conv.db", false);
+    sql::Guard db("conv.db", false);
 
     std::string b_date, a_date;
     double b_conv, a_conv;
