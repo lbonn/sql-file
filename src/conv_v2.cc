@@ -5,11 +5,11 @@
 
 namespace conv {
 
-std::string descr(const std::string& conv_name) {
+std::string Converter::descr() {
     sql::Guard db("conv.db", false);
 
     auto statement = db.prepareStatement<std::string>("SELECT conv_description FROM convs "
-            "WHERE conv_name = ? LIMIT 1", conv_name);
+            "WHERE conv_name = ? LIMIT 1", conv_name_);
 
     int result = statement.step();
     if (result == SQLITE_DONE) {
@@ -21,7 +21,7 @@ std::string descr(const std::string& conv_name) {
     return statement.get_result_col_str(0).value();
 }
 
-double apply(const std::string& conv_name, const std::string& date, double val) {
+double Converter::apply(const std::string& date, double val) {
     sql::Guard db("conv.db", false);
 
     std::string b_date, a_date;
@@ -32,7 +32,7 @@ double apply(const std::string& conv_name, const std::string& date, double val) 
                 "WHERE spots.conv_id = convs.id AND convs.conv_name = ? AND spots.spot_date <= ?"
                 "ORDER BY spots.spot_date DESC "
                 "LIMIT 1",
-                conv_name, date);
+                conv_name_, date);
         int result = statement.step();
         if (result == SQLITE_DONE) {
             throw std::runtime_error("out of range");
@@ -49,7 +49,7 @@ double apply(const std::string& conv_name, const std::string& date, double val) 
                 "WHERE spots.conv_id = convs.id AND convs.conv_name = ? AND spots.spot_date >= ?"
                 "ORDER BY spot_date ASC "
                 "LIMIT 1",
-                conv_name, date);
+                conv_name_, date);
         int result = statement.step();
         if (result == SQLITE_DONE) {
             throw std::runtime_error("out of range");

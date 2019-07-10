@@ -14,10 +14,12 @@ int main(int argc, const char *argv[]) {
     const std::string date = argv[2];
     const double val = std::stod(argv[3], nullptr);
 
-    const std::string conv_descr = conv::descr(conv_name);
+
+    conv::Converter converter("conv.db", conv_name);
+    const std::string conv_descr = converter.descr();
 
     try {
-        std::cout << conv_descr << ": " << val << " / " << conv::apply(conv_name, date, val) << "\n";
+        std::cout << conv_descr << ": " << val << " / " << converter.apply(date, val) << "\n";
     } catch (std::runtime_error &e) {
         std::cerr << "Conversion error: " << e.what() << "\n";
     }

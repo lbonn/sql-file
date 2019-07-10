@@ -5,15 +5,12 @@
 
 namespace conv {
 
-std::string descr(const std::string& conv_name) {
-    (void)conv_name;
+std::string Converter::descr() {
     // hardcoded!
     return "euros / dollars";
 }
 
-double apply(const std::string& conv_name, const std::string& date, double val) {
-    (void)conv_name;
-
+double Converter::apply(const std::string& date, double val) {
     sql::Guard db("conv.db", false);
 
     std::string b_date, a_date;
