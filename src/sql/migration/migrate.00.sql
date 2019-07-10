@@ -1,4 +1,9 @@
+SAVEPOINT MIGRATION;
+
 CREATE TABLE version(version INTEGER);
-INSERT INTO version(rowid,version) VALUES(1,0);
 
 CREATE TABLE eurusd(spot_date TEXT PRIMARY KEY, val REAL NOT NULL);
+
+INSERT INTO version(version) VALUES(0);
+
+RELEASE MIGRATION;
