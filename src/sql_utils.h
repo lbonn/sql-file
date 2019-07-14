@@ -31,18 +31,18 @@ class Exception : public std::runtime_error {
 class Statement {
  public:
   template <typename... Types>
-    Statement(sqlite3* db, const std::string& zSql, const Types&... args)
-    : db_(db), stmt_(nullptr, sqlite3_finalize), bind_cnt_(1) {
-      sqlite3_stmt* statement;
+  Statement(sqlite3* db, const std::string& zSql, const Types&... args)
+  : db_(db), stmt_(nullptr, sqlite3_finalize), bind_cnt_(1) {
+    sqlite3_stmt* statement;
 
-      if (sqlite3_prepare_v2(db_, zSql.c_str(), -1, &statement, nullptr) != SQLITE_OK) {
-        std::cerr << "Could not prepare statement: " << sqlite3_errmsg(db_) << "\n";
-        throw Exception();
-      }
-      stmt_.reset(statement);
-
-      bindArguments(args...);
+    if (sqlite3_prepare_v2(db_, zSql.c_str(), -1, &statement, nullptr) != SQLITE_OK) {
+      std::cerr << "Could not prepare statement: " << sqlite3_errmsg(db_) << "\n";
+      throw Exception();
     }
+    stmt_.reset(statement);
+
+    bindArguments(args...);
+  }
 
   inline sqlite3_stmt* get() const { return stmt_.get(); }
   inline int step() const { return sqlite3_step(stmt_.get()); }
@@ -117,11 +117,11 @@ class Statement {
   void bindArguments() {}
 
   template <typename T, typename... Types>
-    void bindArguments(const T& v, const Types&... args) {
-      bindArgument(v);
-      bind_cnt_ += 1;
-      bindArguments(args...);
-    }
+  void bindArguments(const T& v, const Types&... args) {
+    bindArgument(v);
+    bind_cnt_ += 1;
+    bindArguments(args...);
+  }
 
   sqlite3* db_;
   std::unique_ptr<sqlite3_stmt, int (*)(sqlite3_stmt*)> stmt_;
@@ -162,9 +162,9 @@ class Guard {
   }
 
   template <typename... Types>
-    Statement prepareStatement(const std::string& zSql, const Types&... args) {
-      return Statement(handle_.get(), zSql, args...);
-    }
+  Statement prepareStatement(const std::string& zSql, const Types&... args) {
+    return Statement(handle_.get(), zSql, args...);
+  }
 
   std::string errmsg() const { return sqlite3_errmsg(handle_.get()); }
 
