@@ -11,7 +11,7 @@ std::string Converter::descr() {
 }
 
 double Converter::apply(const std::string& date, double val) {
-    sql::Guard db("conv.db", false);
+    sql::Guard db(db_path_, false);
 
     std::string b_date, a_date;
     double b_conv, a_conv;

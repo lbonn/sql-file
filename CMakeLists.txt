@@ -20,7 +20,7 @@ add_custom_command(OUTPUT sql_schemas_v0.cc
 )
 
 add_executable(currency_convert_v0 $<TARGET_OBJECTS:currency_convert> src/conv_v0.cc sql_schemas_v0.cc)
-target_link_libraries(currency_convert_v0 ${SQLITE_LIBRARIES})
+target_link_libraries(currency_convert_v0 ${SQLITE_LIBRARIES} stdc++fs)
 set_target_properties(currency_convert_v0 PROPERTIES
     CXX_STANDARD 17
     )
@@ -30,7 +30,7 @@ add_custom_command(OUTPUT sql_schemas_v1.cc
 )
 
 add_executable(currency_convert_v1 $<TARGET_OBJECTS:currency_convert> src/conv_v1.cc sql_schemas_v1.cc)
-target_link_libraries(currency_convert_v1 ${SQLITE_LIBRARIES})
+target_link_libraries(currency_convert_v1 ${SQLITE_LIBRARIES} stdc++fs)
 set_target_properties(currency_convert_v1 PROPERTIES
     CXX_STANDARD 17
     )
