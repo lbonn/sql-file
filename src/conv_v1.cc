@@ -6,8 +6,19 @@
 namespace conv {
 
 std::string Converter::descr() {
-    // hardcoded!
-    return "euros / dollars";
+    sql::Guard db("conv.db", false);
+
+    auto statement = db.prepareStatement<std::string>("SELECT conv_description FROM convs "
+            "WHERE conv_name = ? LIMIT 1", conv_name_);
+
+    int result = statement.step();
+    if (result == SQLITE_DONE) {
+        throw std::runtime_error("conv description not found");
+    } else if (result != SQLITE_ROW) {
+        throw std::runtime_error(db.errmsg());
+    }
+
+    return statement.get_result_col_str(0).value();
 }
 
 double Converter::apply(const std::string& date, double val) {
@@ -17,11 +28,11 @@ double Converter::apply(const std::string& date, double val) {
     double b_conv, a_conv;
 
     {
-        auto statement = db.prepareStatement<std::string>("SELECT spot_date, val FROM eurusd "
-                "WHERE spot_date <= ? "
-                "ORDER BY spot_date DESC "
+        auto statement = db.prepareStatement<std::string>("SELECT spot_date, val FROM spots INNER JOIN convs "
+                "WHERE spots.conv_id = convs.id AND convs.conv_name = ? AND spots.spot_date <= ?"
+                "ORDER BY spots.spot_date DESC "
                 "LIMIT 1",
-                date);
+                conv_name_, date);
         int result = statement.step();
         if (result == SQLITE_DONE) {
             throw std::runtime_error("out of range");
@@ -34,11 +45,11 @@ double Converter::apply(const std::string& date, double val) {
     }
 
     {
-        auto statement = db.prepareStatement<std::string>("SELECT spot_date, val FROM eurusd "
-                "WHERE spot_date >= ? "
+        auto statement = db.prepareStatement<std::string>("SELECT spot_date, val FROM spots INNER JOIN convs "
+                "WHERE spots.conv_id = convs.id AND convs.conv_name = ? AND spots.spot_date >= ?"
                 "ORDER BY spot_date ASC "
                 "LIMIT 1",
-                date);
+                conv_name_, date);
         int result = statement.step();
         if (result == SQLITE_DONE) {
             throw std::runtime_error("out of range");

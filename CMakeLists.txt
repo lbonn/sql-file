@@ -15,22 +15,22 @@ set_target_properties(currency_convert PROPERTIES
     CXX_STANDARD 17
     )
 
+add_custom_command(OUTPUT sql_schemas_v0.cc
+    COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/src/sql/embed_schemas.py ${PROJECT_SOURCE_DIR}/src/sql/ 0 schema.0.sql ${CMAKE_CURRENT_BINARY_DIR}/sql_schemas_v0.cc currconv
+)
+
+add_executable(currency_convert_v0 $<TARGET_OBJECTS:currency_convert> src/conv_v0.cc sql_schemas_v0.cc)
+target_link_libraries(currency_convert_v0 ${SQLITE_LIBRARIES})
+set_target_properties(currency_convert_v0 PROPERTIES
+    CXX_STANDARD 17
+    )
+
 add_custom_command(OUTPUT sql_schemas_v1.cc
-    COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/src/sql/embed_schemas.py ${PROJECT_SOURCE_DIR}/src/sql/ schema.1.sql ${CMAKE_CURRENT_BINARY_DIR}/sql_schemas_v1.cc currconv
+    COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/src/sql/embed_schemas.py ${PROJECT_SOURCE_DIR}/src/sql/ 1 schema.1.sql ${CMAKE_CURRENT_BINARY_DIR}/sql_schemas_v1.cc currconv
 )
 
 add_executable(currency_convert_v1 $<TARGET_OBJECTS:currency_convert> src/conv_v1.cc sql_schemas_v1.cc)
 target_link_libraries(currency_convert_v1 ${SQLITE_LIBRARIES})
 set_target_properties(currency_convert_v1 PROPERTIES
-    CXX_STANDARD 17
-    )
-
-add_custom_command(OUTPUT sql_schemas_v2.cc
-    COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/src/sql/embed_schemas.py ${PROJECT_SOURCE_DIR}/src/sql/ schema.2.sql ${CMAKE_CURRENT_BINARY_DIR}/sql_schemas_v2.cc currconv
-)
-
-add_executable(currency_convert_v2 $<TARGET_OBJECTS:currency_convert> src/conv_v2.cc sql_schemas_v2.cc)
-target_link_libraries(currency_convert_v2 ${SQLITE_LIBRARIES})
-set_target_properties(currency_convert_v2 PROPERTIES
     CXX_STANDARD 17
     )

@@ -293,6 +293,7 @@ Output
 extern const std::vector<std::string> currconv_schema_migrations;
 extern const std::vector<std::string> currconv_schema_rollback_migrations;
 extern const std::string currconv_current_schema;
+extern const int currconv_current_schema_version;
 ```
 
 # Thanks

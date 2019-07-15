@@ -24,20 +24,22 @@ def append_migration(migration_path, source):
 
 
 if __name__ == '__main__':
-    if len(sys.argv) != 5:
+    if len(sys.argv) != 6:
         print("\nIncorrect arguments")
-        print("Usage:\n {} {} {} {} {}\n".format(sys.argv[0], "schemas_dir", "schema", "output_source", "name_prefix"))
+        print("Usage:\n {} {} {} {} {} {}\n".format(sys.argv[0], "schemas_dir", "schemav", "schema",
+                                                 "output_source", "name_prefix"))
         sys.exit(-1)
 
     sql_dir = sys.argv[1]
-    schema = sys.argv[2]
-    schemas_output = sys.argv[3]
-    prefix = sys.argv[4]
+    schemav = int(sys.argv[2])
+    schema = sys.argv[3]
+    schemas_output = sys.argv[4]
+    prefix = sys.argv[5]
 
     migration_dir = os.path.join(sql_dir, 'migration')
     rollback_dir = os.path.join(sql_dir, 'rollback')
-    migration_list = sorted(os.listdir(migration_dir))
-    rollback_migrations_list = sorted(os.listdir(rollback_dir))
+    migration_list = sorted(os.listdir(migration_dir))[:schemav+1]
+    rollback_migrations_list = sorted(os.listdir(rollback_dir))[:schemav]
 
     file_depends_list = [os.path.join(sql_dir, schema)]
     file_depends_list += [os.path.join(migration_dir, p) for p in migration_list]
@@ -45,7 +47,7 @@ if __name__ == '__main__':
     file_depends_list.append(__file__)  # set dependency on itself (this script)
     max_file_stamp = max(os.path.getmtime(p) for p in file_depends_list)
 
-    pattern = re.compile("//Latest schema timestamp: (\d+)")
+    pattern = re.compile(r"//Latest schema timestamp: (\d+)")
     if os.path.exists(schemas_output):
         for i, line in enumerate(open(schemas_output)):
             for match in re.finditer(pattern, line):
