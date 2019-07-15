@@ -27,14 +27,13 @@ if __name__ == '__main__':
     if len(sys.argv) != 6:
         print("\nIncorrect arguments")
         print("Usage:\n {} {} {} {} {} {}\n".format(sys.argv[0], "schemas_dir", "schemav", "schema",
-                                                 "output_source", "name_prefix"))
+                                                 "output_source"))
         sys.exit(-1)
 
     sql_dir = sys.argv[1]
     schemav = int(sys.argv[2])
     schema = sys.argv[3]
     schemas_output = sys.argv[4]
-    prefix = sys.argv[5]
 
     migration_dir = os.path.join(sql_dir, 'migration')
     rollback_dir = os.path.join(sql_dir, 'rollback')
@@ -57,14 +56,14 @@ if __name__ == '__main__':
 
     with open(schemas_output, 'w') as source:
         source.write(warning_text % max_file_stamp)
-        source.write("extern const std::vector<std::string> {}_schema_migrations = {{".format(prefix))
+        source.write("extern const std::vector<std::string> schema_migrations = {")
         for migration in migration_list[:-1]:
             append_migration(os.path.join(migration_dir, migration), source)
             source.write("\",\n")
         append_migration(os.path.join(migration_dir, migration_list[-1]), source)
         source.write("\"\n};\n")
 
-        source.write("extern const std::vector<std::string> {}_schema_rollback_migrations = {{".format(prefix))
+        source.write("extern const std::vector<std::string> schema_rollback_migrations = {")
         if len(rollback_migrations_list) > 0:
             ver = int(rollback_migrations_list[0].split(".")[1])
             for i in range(ver):
@@ -79,5 +78,5 @@ if __name__ == '__main__':
 
         current_schema = open(os.path.join(sql_dir, schema), 'r').read()
         current_schema_escaped = escape_string(current_schema)
-        source.write('extern const std::string %s_current_schema = "%s";' % (prefix, current_schema_escaped));
-        source.write('extern const int %s_current_schema_version = %u;' % (prefix ,(len(migration_list)-1)));
+        source.write('extern const std::string current_schema = "%s";' % current_schema_escaped)
+        source.write('extern const int current_schema_version = %u;' % (len(migration_list)-1))
