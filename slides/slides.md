@@ -130,6 +130,11 @@ std::string getUserCountry(const std::string &user_id) {
 }
 ```
 
+::: notes
+for modification, if `.commit()` is not called (for example exception),
+everything is rolled back
+:::
+
 
 # Smart Statement
 
