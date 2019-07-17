@@ -34,3 +34,8 @@ target_link_libraries(currency_convert_v1 ${SQLITE_LIBRARIES} stdc++fs)
 set_target_properties(currency_convert_v1 PROPERTIES
     CXX_STANDARD 17
     )
+
+# test
+
+add_test(NAME convs COMMAND ${PROJECT_SOURCE_DIR}/test/test.sh ${CMAKE_CURRENT_BINARY_DIR} ${PROJECT_SOURCE_DIR}/data)
+enable_testing(ON)
