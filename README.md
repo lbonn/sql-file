@@ -29,6 +29,8 @@ mkdir build
 
 Slides for the presentation on the C++ Meetup Berlin are in [slides/](./slides/)
 
+Or browse at [https://lbonn.github.io/sql-file/](https://lbonn.github.io/sql-file/)
+
 # License
 
 This code is licensed under the link:LICENSE[Mozilla Public License 2.0], a copy of which can be found in this repository.
