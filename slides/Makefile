@@ -3,7 +3,7 @@
 all: slides.html slides_portable.html
 
 clean:
-	-$(RM) slides.html
+	-$(RM) slides.html slides_portable.html
 
 serve:
 	livereload -p 8000
