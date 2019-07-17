@@ -5,12 +5,19 @@
 
 namespace conv {
 
-std::string Converter::descr() {
+std::string Converter::descr(const std::string &conv_name) {
     // hardcoded!
+    if (conv_name != "EURUSD") {
+        throw std::runtime_error("Unsupported conversion");
+    }
     return "euros / dollars";
 }
 
-double Converter::apply(const std::string& date, double val) {
+double Converter::apply(const std::string &conv_name, const std::string& date, double val) {
+    if (conv_name != "EURUSD") {
+        throw std::runtime_error("Unsupported conversion");
+    }
+
     sql::Guard db(db_path_, false);
 
     std::string b_date, a_date;

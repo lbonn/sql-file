@@ -18,32 +18,33 @@ namespace conv {
 class Converter {
  public:
 
-  Converter(const char *db_path, const std::string& conv_name) :
-      db_path_(db_path), conv_name_(conv_name) {
-          if (!std::filesystem::is_regular_file(db_path)) {
-              throw std::runtime_error(std::string("could not find ") + db_path);
+  Converter(const char *db_path) :
+      db_path_(db_path) {
+
+      if (!std::filesystem::is_regular_file(db_path)) {
+          throw std::runtime_error(std::string("could not find ") + db_path);
+      }
+
+      int dbVersion = getVersion();
+      if (dbVersion != current_schema_version) {
+          std::cerr << "db version mismatch, attempting migration...\n";
+
+          // make a copy to preserve the original
+          int fd = mkstemp(tmpfn_);
+          if (fd < 0) {
+              throw std::runtime_error("could not get temporary file");
           }
+          close(fd);
+          std::filesystem::copy_file(db_path, tmpfn_, std::filesystem::copy_options::overwrite_existing);
+          db_path_ = tmpfn_;
 
-          int dbVersion = getVersion();
-          if (dbVersion != current_schema_version) {
-              std::cerr << "db version mismatch, attempting migration...\n";
-
-              // make a copy to preserve the original
-              int fd = mkstemp(tmpfn_);
-              if (fd < 0) {
-                  throw std::runtime_error("could not get temporary file");
-              }
-              close(fd);
-              std::filesystem::copy_file(db_path, tmpfn_, std::filesystem::copy_options::overwrite_existing);
-              db_path_ = tmpfn_;
-
-              if (dbVersion > current_schema_version) {
-                  dbMigrateBackward(dbVersion);
-              } else {
-                  dbMigrateForward(dbVersion);
-              }
+          if (dbVersion > current_schema_version) {
+              dbMigrateBackward(dbVersion);
+          } else {
+              dbMigrateForward(dbVersion);
           }
       }
+  }
 
   sql::Guard guard() {
       return sql::Guard(db_path_, false);
@@ -138,12 +139,11 @@ class Converter {
       }
   }
 
-  std::string descr();
-  double apply(const std::string& date, double val);
+  std::string descr(const std::string& conv_name);
+  double apply(const std::string & conv_name, const std::string& date, double val);
 
  private:
   const char *db_path_;
-  const std::string conv_name_;
   char tmpfn_[15]{"/tmp/cc_XXXXXX"};
 };
 

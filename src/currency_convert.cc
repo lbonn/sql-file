@@ -16,11 +16,13 @@ int main(int argc, const char *argv[]) {
     const double val = std::stod(argv[4], nullptr);
 
     try {
-        conv::Converter converter(db, conv_name);
-        const std::string conv_descr = converter.descr();
+        conv::Converter converter(db);
+        const std::string conv_descr = converter.descr(conv_name);
 
-        std::cout << conv_descr << ": " << val << " / " << converter.apply(date, val) << "\n";
+        std::cout << conv_descr << ": " << val << " / " << converter.apply(conv_name, date, val) << "\n";
     } catch (std::runtime_error &e) {
         std::cerr << "Conversion error: " << e.what() << "\n";
+        return 1;
     }
+    return 0;
 }
